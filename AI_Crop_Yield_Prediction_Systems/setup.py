@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 # ============================================================
 # USER CONFIGURATION
@@ -18,7 +19,7 @@ try:
     )
     print(f"✅ Conda environment '{ENV_NAME}' created.")
 except subprocess.CalledProcessError:
-    print(f"⚠️ Conda environment '{ENV_NAME}' already exists. Skipping creation.")
+    print(f"⚠️ Conda environment '{ENV_NAME}' may already exist. Skipping creation.")
 
 # ============================================================
 # 2️⃣ INSTALL CORE PACKAGES (conda-forge)
@@ -45,6 +46,7 @@ conda_packages = [
     "planetary-computer",
     "earthengine-api",
     "geemap",
+    "geedim",  # ✅ Added geedim
 
     # ---- Dashboard & mapping ----
     "streamlit",
@@ -72,9 +74,28 @@ subprocess.run(
 print("✅ Conda packages installed.")
 
 # ============================================================
+# 2️⃣b VERIFY GEEDIM (Fallback to pip if needed)
+# ============================================================
+print("🔍 Verifying geedim installation...")
+
+try:
+    subprocess.run(
+        ["conda", "run", "-n", ENV_NAME, "python", "-c", "import geedim"],
+        check=True
+    )
+    print("✅ geedim is installed.")
+except subprocess.CalledProcessError:
+    print("⚠️ geedim not found via conda. Installing via pip...")
+    subprocess.run(
+        ["conda", "run", "-n", ENV_NAME, "pip", "install", "geedim"],
+        check=True
+    )
+    print("✅ geedim installed via pip.")
+
+# ============================================================
 # 3️⃣ PIN STREAMLIT-CRITICAL DEPENDENCIES
 # ============================================================
-# Streamlit currently requires:
+# Streamlit requires:
 # - protobuf < 4
 # - altair < 5
 
@@ -86,7 +107,7 @@ subprocess.run(
     check=False
 )
 
-# Install known-compatible versions
+# Install compatible versions
 subprocess.run(
     [
         "conda", "run",
