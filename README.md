@@ -1,4 +1,4 @@
-# 🌾 AI Crop Yield Prediction System
+# 🌾 Cloud-Resilient-Crop-Yield-Prediction
 
 ## 🌍 Overview
 
