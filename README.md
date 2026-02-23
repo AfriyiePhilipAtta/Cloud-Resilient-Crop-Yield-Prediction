@@ -1,4 +1,4 @@
-# 🌾 Cloud-Resilient-Crop-Yield-Prediction
+# 🌾 AI and Remote Sensing for Cloud-Resilient-Crop-Yield-Prediction
 
 ## 🌍 Overview
 
