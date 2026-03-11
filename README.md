@@ -1,4 +1,4 @@
-# 🌾 AI and Remote Sensing for Cloud-Resilient-Crop-Yield-Prediction
+# 🌾 AI and Remote Sensing for Cloud-Resilient Crop Yield Prediction
 
 ## 🌍 Overview
 
@@ -65,6 +65,16 @@ Used exclusively for pixel-by-pixel spatial yield map generation. ENV features a
 
 ---
 
+## 🛰️ NDVI: S2-Only vs Kalman-Fused S2+S1
+
+The figure below compares raw Sentinel-2 NDVI (left column) against Kalman-fused S2+S1 NDVI (right column) across all three growth stages at farm boundary level. The fused output recovers cloud-contaminated pixels using SAR backscatter, producing a spatially complete NDVI field.
+
+![Farm NDVI Comparison — S2-Only vs Kalman-Fused, All Growth Stages](output_dfh/FARM_NDVI_Comparison_ALL_STAGES.png)
+
+> **Key observation:** S2-only images show uniform low NDVI (deep red) where cloud gaps exist. Kalman fusion restores meaningful spatial variation, particularly visible in the Early and Mid stages where cloud cover is highest.
+
+---
+
 ## 📊 Results Summary (from latest run)
 
 ### 🏆 Best Stage: **LATE**
@@ -103,6 +113,70 @@ Used exclusively for pixel-by-pixel spatial yield map generation. ENV features a
 | 🌱 EARLY | 0.78 | 1.28 | 1.54 | 0.32 |
 | 🌿 MID | 0.78 | 1.23 | 1.54 | 0.35 |
 | 🌾 LATE | 0.78 | 1.32 | 1.74 | 0.30 |
+
+---
+
+## 🎯 Validation — Predicted vs Observed
+
+### All Growth Stages (Multi-Panel)
+
+The scatter plots below show predicted vs reported yield (t/ha) for all 28 plots across each growth stage. The diagonal line represents perfect prediction (1:1). Points above the line indicate underprediction; points below indicate overprediction.
+
+![Predicted vs Observed — All Three Growth Stages](output_dfh/Predicted_vs_Observed_3STAGES_multipanel.png)
+
+### Best Stage — LATE (Single Panel)
+
+The Late stage achieves the best validation performance (Val R² = 0.172, Val RMSE = 1.186 t/ha). The large train–val R² gap (Train R² = 0.709 vs Val R² = 0.172) indicates overfitting consistent with the small sample size (n=28 plots).
+
+![Predicted vs Observed — Late Stage](output_dfh/Predicted_vs_Observed_LATE.png)
+
+---
+
+## 🗺️ Spatial Yield Maps (Model 2)
+
+### All Stages — Side-by-Side Comparison (Common Colour Scale)
+
+The three yield maps below are rendered on the same colour scale (0.9–1.5 t/ha) to allow direct visual comparison of predicted within-field yield variability across growth stages.
+
+![Growth Stage Yield Comparison — Common Colour Scale](output_dfh/YieldMap_Comparison_ALL_STAGES.png)
+
+### XGBoost Yield Maps — All Growth Stages
+
+![XGBoost Yield Maps — All Growth Stages](output_dfh/YieldMaps_XGBoost_3stages.png)
+
+### Individual Stage Maps
+
+**🌱 Early Stage** — Val R² = −0.327 | RMSE = 1.034 t/ha | MAE = 0.843 t/ha
+
+![Predicted Yield Map — Early Stage](output_dfh/YieldMap_XGB_EARLY_stage_individual.png)
+
+**🌿 Mid Stage** — Val R² = −0.472 | RMSE = 1.089 t/ha | MAE = 0.877 t/ha
+
+![Predicted Yield Map — Mid Stage](output_dfh/YieldMap_XGB_MID_stage_individual.png)
+
+**🌾 Late Stage** — Val R² = −0.242 | RMSE = 1.000 t/ha | MAE = 0.819 t/ha
+
+![Predicted Yield Map — Late Stage](output_dfh/YieldMap_XGB_LATE_stage_individual.png)
+
+---
+
+## 📉 Yield Change Between Stages
+
+### Mid → Early (Mid stage minus Early stage)
+
+Mean change: −0.04 t/ha | Std: 0.12 t/ha | Pixels increasing: 2.4% | Pixels decreasing: 21.9%
+
+Red indicates yield increase from Early to Mid; blue indicates yield decrease. The dominant blue signal shows that most of the field experienced a slight yield decline between Early and Mid stage predictions.
+
+![Yield Change — Mid minus Early](output_dfh/YieldMap_Difference_MID_minus_EARLY.png)
+
+### Late → Mid (Late stage minus Mid stage)
+
+Mean change: +0.09 t/ha | Std: 0.19 t/ha | Pixels increasing: 27.4% | Pixels decreasing: 3.5%
+
+The dominant red signal shows that most of the field experienced yield recovery from Mid to Late stage, consistent with crop maturation during the July–August window.
+
+![Yield Change — Late minus Mid](output_dfh/YieldMap_Difference_LATE_minus_MID.png)
 
 ---
 
@@ -183,7 +257,7 @@ or if executable:
 
 ## 📂 Outputs
 
-All outputs are saved to the `output/` directory.
+All outputs are saved to the `output_dfh/` directory.
 
 ### 🗺️ GeoTIFFs
 
@@ -283,7 +357,7 @@ AI_Crop_Yield_Prediction_Systems/
 │   └── witz_farm.shp                           # Farm AOI shapefile
 ├── 📍 GGE_vector/
 │   └── GGE_Harvest_150_gcs.shp                 # Plot harvest boundaries
-└── 📂 output/                                  # All generated outputs
+└── 📂 output_dfh/                              # All generated outputs
     ├── 🗺️  *.tif                               # GeoTIFF rasters
     ├── 🖼️  *.png                               # Figures
     └── 📄 uncertainty_confidence_levels.csv    # Confidence summary
