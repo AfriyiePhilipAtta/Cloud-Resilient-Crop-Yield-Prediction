@@ -119,7 +119,7 @@ def add_rvi(img):
     return img.addBands(rvi)
 
 # ============================================================
-# KALMAN FUSION  (pixel-level; mirrors crop-yield pipeline)
+# KALMAN FUSION  
 # ============================================================
 def kalman_fuse_ndvi(s2_collection, s1_collection, start, end, geom):
     """
@@ -167,7 +167,7 @@ def kalman_fuse_ndvi(s2_collection, s1_collection, start, end, geom):
     )
     # Scale RVI [0, 1] as an NDVI proxy
     s1_ndvi = s1_rvi.unitScale(0, 1).rename("NDVI")
-    s1_var  = ee.Image.constant(S1_SPECKLE_VAR)   # fixed noise model
+    s1_var  = ee.Image.constant(S1_SPECKLE_VAR)   
 
     # ── Kalman blend weights ──────────────────────────────────
     denom = s1_var.add(s2_var_safe)
